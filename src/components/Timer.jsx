@@ -15,6 +15,7 @@ function MyStopWatch() {
   const [watchId, setWatchId] = useState(null);
   const [isRunning, setIsRuning] = useState(false);
   const [isDisabled, setIsDisabled] = useState(true); 
+  const [isResetClicked, setIsResetClicked] =  useState(false);
 
   let initialPosition = [];
   let currentPosition = [];
@@ -41,6 +42,12 @@ function MyStopWatch() {
   let checkpointHistory = [];
 
   const watchPosition = () => {
+    
+    if(isResetClicked === true) {
+      isResetClicked(false);
+      return;
+    }
+
     if (navigator.geolocation) {
      setWatchId(navigator.geolocation.watchPosition(function (position) {
         console.log(position);
@@ -57,12 +64,10 @@ function MyStopWatch() {
             position.coords.longitude
           ),
         };
-
+        
         checkpointHistory.push(checkpoint);
-        let checkpointResult = [...new Set(checkpointHistory)];
-        console.log(checkpointHistory)
 
-        const totalDistance = checkpointResult.reduce(
+        const totalDistance = checkpointHistory.reduce(
           (partialSum, object) => Number(partialSum) + Number(object.distance),
           0
         );
@@ -89,7 +94,7 @@ function MyStopWatch() {
     if (checkpointHistory.length == 0) {
       return 0;
     }
-    console.log(checkpointHistory)
+   
     initialPosition = [
       checkpointHistory[checkpointHistory.length - 1].latitude,
       checkpointHistory[checkpointHistory.length - 1].longitude,
@@ -109,11 +114,17 @@ function MyStopWatch() {
   reset();
   setIsRuning(false);
   setSdistance(0);
+  setIsResetClicked(true);
   setSpeed(0);
   pause();
   navigator.geolocation.clearWatch(watchId);
   checkpointHistory = [];
   }
+
+const pauseTimer = () => { 
+   pause();
+   setIsRuning(false);
+}
 
   return (
     <div style={{ textAlign: "center" }}>
@@ -131,7 +142,7 @@ function MyStopWatch() {
       <button type="button" className="button-36" onClick={() => setIsRuning(true)}>
         Start
       </button>
-      <button type="button" className="button-36" onClick={() => setIsRuning(false)} disabled = {isDisabled}>
+      <button type="button" className="button-36" onClick={() => pauseTimer()} disabled = {isDisabled}>
         Pause
       </button>
       <button  type="button" className="button-36" onClick={() => resetTimer()} disabled = {isDisabled}>
