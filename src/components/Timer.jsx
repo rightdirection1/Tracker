@@ -63,11 +63,11 @@ function MyStopWatch() {
         console.log(checkpointHistory)
 
         const totalDistance = checkpointResult.reduce(
-          (partialSum, object) => partialSum + object.distance,
+          (partialSum, object) => Number(partialSum) + Number(object.distance),
           0
         );
 
-        let totalResult = Number(totalDistance).toPrecision(4);
+        let totalResult = totalDistance.toPrecision(4);
         console.log(totalResult);
         setSdistance(totalDistance);
 
