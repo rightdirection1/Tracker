@@ -138,7 +138,7 @@ function MyStopWatch() {
         Reset
       </button>
       <div>
-        <p id="distance">{distance} m</p>
+        <p id="distance">{distance.toPrecision(4)} m</p>
         <p id="speed">{speed.toPrecision(4)} km/h</p>
       </div>
     </div>
