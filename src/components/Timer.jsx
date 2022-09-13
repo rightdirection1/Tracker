@@ -42,7 +42,7 @@ function MyStopWatch() {
 
   const watchPosition = () => {
     if (navigator.geolocation) {
-     setWatchId( navigator.geolocation.watchPosition(function (position) {
+     setWatchId(navigator.geolocation.watchPosition(function (position) {
         console.log(position);
         console.log("Latitude is :", position.coords.latitude);
         console.log("Longitude is :", position.coords.longitude);
@@ -102,20 +102,15 @@ function MyStopWatch() {
 
     let distanceResult = haversine(initialPosition, currentPosition) / 1000;
     
-    console.log(distanceResult);
- 
     return Number(distanceResult).toPrecision(4);
   };
 
  const resetTimer = () => {
   reset();
-  setIsRuning(true);
+  setIsRuning(false);
+  pause();
   navigator.geolocation.clearWatch(watchId);
   checkpointHistory = [];
-  
-  if(isRunning) {
-  watchPosition();
-  }
   }
 
   return (
