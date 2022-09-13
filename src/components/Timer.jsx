@@ -108,6 +108,8 @@ function MyStopWatch() {
  const resetTimer = () => {
   reset();
   setIsRuning(false);
+  setSdistance(0);
+  setSpeed(0);
   pause();
   navigator.geolocation.clearWatch(watchId);
   checkpointHistory = [];
@@ -137,7 +139,7 @@ function MyStopWatch() {
       </button>
       <div>
         <p id="distance">{distance} m</p>
-        <p id="speed">{speed} km/h</p>
+        <p id="speed">{speed.toPrecision(4)} km/h</p>
       </div>
     </div>
   );
