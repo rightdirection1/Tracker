@@ -14,8 +14,9 @@ function MyStopWatch() {
   const [intervalId, setIntervalId] = useState(null);
   const [watchId, setWatchId] = useState(null);
   const [isRunning, setIsRuning] = useState(false);
-  const [isDisabled, setIsDisabled] = useState(true); 
-  const [isResetClicked, setIsResetClicked] =  useState(false);
+  const [isDisabled, setIsDisabled] = useState(true);
+  const [counter, setCounter] = useState(0);
+
 
   let initialPosition = [];
   let currentPosition = [];
@@ -42,94 +43,97 @@ function MyStopWatch() {
   let checkpointHistory = [];
 
   const watchPosition = () => {
-    
-    if(isResetClicked === true) {
-      isResetClicked(false);
-      return;
-    }
-
+    setCounter(prevState => prevState + 1);
     if (navigator.geolocation) {
-     setWatchId(navigator.geolocation.watchPosition(function (position) {
-        console.log(position);
-        console.log("Latitude is :", position.coords.latitude);
-        console.log("Longitude is :", position.coords.longitude);
-        console.log("Speed :", position.coords.speed);
-       
-        let checkpoint = {
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-          speed: position.coords.speed,
-          distance: calcDistance(
-            position.coords.latitude,
-            position.coords.longitude
-          ),
-        };
-        
-        checkpointHistory.push(checkpoint);
+      setWatchId(
+        navigator.geolocation.watchPosition(function (position) {
+          console.log(position);
+          console.log("Latitude is :", position.coords.latitude);
+          console.log("Longitude is :", position.coords.longitude);
+          console.log("Speed :", position.coords.speed);
 
-        const totalDistance = checkpointHistory.reduce(
-          (partialSum, object) => Number(partialSum) + Number(object.distance),
-          0
-        );
+          let checkpoint = {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            speed: position.coords.speed,
+            distance: calcDistance(
+              position.coords.latitude,
+              position.coords.longitude
+            ),
+          };
 
-        let totalResult = totalDistance.toPrecision(4);
-        console.log(totalResult);
-        setSdistance(totalDistance);
+          checkpointHistory.push(checkpoint);
 
-        if (position.coords.speed !== null) {
-          setSpeed(position.coords.speed);
-        } else {
-          setSpeed(0);
-        }
+          const totalDistance = checkpointHistory.reduce(
+            (partialSum, object) =>
+              Number(partialSum) + Number(object.distance),
+            0
+          );
 
-        if (position.coords.latitude == null) {
-          alert("GPS not activated! Please Turn On Your GPS!");
-        }
-      }));
+          let totalResult = totalDistance.toPrecision(4);
+          console.log(totalResult);
+          setSdistance(totalDistance);
+
+          if (position.coords.speed !== null) {
+            setSpeed(position.coords.speed);
+          } else {
+            setSpeed(0);
+          }
+
+          if (position.coords.latitude == null) {
+            alert("GPS not activated! Please Turn On Your GPS!");
+          }
+        })
+      );
     }
   };
 
   const calcDistance = (latitude, longitude) => {
-    
     if (checkpointHistory.length == 0) {
       return 0;
     }
-   
+
     initialPosition = [
       checkpointHistory[checkpointHistory.length - 1].latitude,
       checkpointHistory[checkpointHistory.length - 1].longitude,
     ];
     currentPosition = [latitude, longitude];
 
-    if(JSON.stringify(initialPosition) === JSON.stringify(currentPosition)) {
+    if (JSON.stringify(initialPosition) === JSON.stringify(currentPosition)) {
       return 0;
     }
 
     let distanceResult = haversine(initialPosition, currentPosition) / 1000;
-    
+
     return Number(distanceResult).toPrecision(4);
   };
 
- const resetTimer = () => {
-  reset();
-  setIsRuning(false);
-  setSdistance(0);
-  setIsResetClicked(true);
-  setSpeed(0);
-  pause();
-  navigator.geolocation.clearWatch(watchId);
-  checkpointHistory = [];
-  }
+  const resetTimer = () => {
+    reset();
+    console.log("reset");
+    setIsRuning(false);
+    console.log("setIsRuning");
+    setSdistance(0);
+    console.log("setSdistance");
+    setSpeed(0);
+    console.log("setSpeed");
+  
+    navigator.geolocation.clearWatch(watchId);
+    console.log(watchId);
+    checkpointHistory = [];
+  };
 
-const pauseTimer = () => { 
-   pause();
-   setIsRuning(false);
-}
+  const pauseTimer = () => {
+    pause();
+    console.log("pause");
+    setIsRuning(false);
+  };
 
   return (
     <div style={{ textAlign: "center" }}>
       <h1 className="header">Tracker</h1>
       <p>Duration</p>
+      <p>{counter}</p>
       <div>
         <div className="box">
           {" "}
@@ -139,13 +143,27 @@ const pauseTimer = () => {
         </div>
       </div>
       <p>{isRunning ? "Running" : "Not running"}</p>
-      <button type="button" className="button-36" onClick={() => setIsRuning(true)}>
+      <button
+        type="button"
+        className="button-36"
+        onClick={() => setIsRuning(true)}
+      >
         Start
       </button>
-      <button type="button" className="button-36" onClick={() => pauseTimer()} disabled = {isDisabled}>
+      <button
+        type="button"
+        className="button-36"
+        onClick={() => pauseTimer()}
+        disabled={isDisabled}
+      >
         Pause
       </button>
-      <button  type="button" className="button-36" onClick={() => resetTimer()} disabled = {isDisabled}>
+      <button
+        type="button"
+        className="button-36"
+        onClick={() => resetTimer()}
+        disabled={isDisabled}
+      >
         Reset
       </button>
       <div>
