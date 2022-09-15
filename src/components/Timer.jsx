@@ -17,7 +17,6 @@ function MyStopWatch() {
   const [isDisabled, setIsDisabled] = useState(true);
   const [counter, setCounter] = useState(0);
 
-
   let initialPosition = [];
   let currentPosition = [];
 
@@ -70,7 +69,7 @@ function MyStopWatch() {
             0
           );
 
-          let totalResult = totalDistance.toPrecision(4);
+          let totalResult = totalDistance.toFixed(4);
           console.log(totalResult);
           setSdistance(totalDistance);
 
@@ -167,8 +166,8 @@ function MyStopWatch() {
         Reset
       </button>
       <div>
-        <p id="distance">{distance.toPrecision(4)} m</p>
-        <p id="speed">{speed.toPrecision(4)} km/h</p>
+        <p id="distance">{distance.toFixed(4)} m</p>
+        <p id="speed">{speed.toFixed(4)} km/h</p>
       </div>
     </div>
   );
